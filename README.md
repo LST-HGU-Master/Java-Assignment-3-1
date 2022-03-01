@@ -1,14 +1,27 @@
-# Autograding Example: Java
-This example project is written in Java, and tested with Gradle/JUnit.
+# 課題 3-1
+繰り返し文
 
-### The assignment
-The tests are currently failing because of an output mismatch. Fixing the `System.out.println` in the main method will make the tests green.
+### 課題の説明
+キーボードから整数(0, 1, 2, 3, ...)の入力を繰り返し、その合計値が100を超えたときに終了するプログラムを作成しなさい。
+ただし、整数以外の入力は行わないものとする。またキーボードからの入力は下記のように行うこと（new Scanner()は１度だけにする）。
 
-### Setup command
-N/A
+```java
+java.util.Scanner sc = new java.util.Scanner(System.in); // 最初の1回だけ書く
+input = sc.nextInt(); //　キーボードから入力を受ける
+input = sc.nextInt(); //　2回目以降も同様
+input = sc.nextLine(); // 文字列を受け付ける場合はnextLine()を使う
+```
 
-### Run command
-`gradle test`
-
-### Notes
-- The JDK is installed on GitHub Actions machines, so you're also able to directly invoke `javac`, `java`, or any other CLI command included in the JDK. 
+- 実行結果の例
+```
+正の整数を入力してください
+1
+合計は1です
+正の整数を入力してください
+46
+合計は47です
+正の整数を入力してください
+71
+合計は118です
+プログラムを終了します
+```
