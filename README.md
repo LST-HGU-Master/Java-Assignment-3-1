@@ -7,8 +7,8 @@
 ```java
 java.util.Scanner sc = new java.util.Scanner(System.in); // 最初の1回だけ書く
 
-sc.nextInt() //　キーボードから数字を受ける命令
-sc.nextLine() // キーボードから文字列を受ける命令
+sc.nextInt() //　キーボードから数字を受けとりint型に変換する命令
+sc.nextLine() // キーボードから1行分の文字列を受ける命令
 ```
 
 ### 実行結果の例
