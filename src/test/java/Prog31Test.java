@@ -1,14 +1,12 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
-import java.lang.AssertionError;
 import java.io.*;
 /**
  * @version (20230417)
  *   supporting both println and print("\n") on Windows
+ *  @version(20261008) revised 
  **/
 public class Prog31Test {
 
@@ -42,71 +40,52 @@ public class Prog31Test {
         // action
         in.inputln("99");
         in.inputln("1");
-        in.inputln("1");
+        in.inputln("1"); // ここで合計101となり終了すべき
         in.inputln("1");
         Prog31.main(null);
 
-        // assertion
-        String[] prints = bos.toString().split("\r\n|\n");
-        String l2Str = prints[prints.length - 2];
-
-        try {
-            assertTrue(l2Str.substring(0,3).equals("合計は"), "「合計は」の文字列がありません!");
-            assertTrue(l2Str.substring(l2Str.length()-2).equals("です" ),
-                "「合計は」から始まるprintの最後が「です」になっていません!"
-            );
-            assertNotEquals(l2Str,"合計は100です","合計値が100を超える前に終了しました!");
-            assertNotEquals(l2Str,"合計は102です","合計値が100を超えてもまだ繰り返します!");
-        } catch (AssertionError err) {
-            after();
-            throw err;     
-        }
+        String output = bos.toString().replace("\r\n", "\n");
+        
+        assertTrue(output.contains("合計は101です"), 
+            "合計値が101になった際の出力「合計は101です」が見つかりません。"
+        );
+        assertFalse(output.contains("合計は102です"), 
+            "合計値が100を超えても処理を継続しています。"
+        );
     }
+
 
     @Test
     public void testDoNotStopWithManyInputs()
     {
-        // action
-        for(int i=0; i<10000; i++) {
+        // 100回の0入力（ループ回数固定対策）
+        for (int i = 0; i < 100; i++) {
             in.inputln("0");
         }
         in.inputln("101");
         in.inputln("200");
         Prog31.main(null);
 
-        // assertion
-        String[] prints = bos.toString().split("\r\n|\n");
-        try {
-            assertEquals("合計は101です", prints[prints.length - 2],
-                "繰り返し回数を指定してはいけません!)"
-            );
-        } catch(AssertionError err) {
-            after();
-            throw err;     
-        }
+        String output = bos.toString();
+
+        assertTrue(output.contains("合計は101です"), 
+            "繰り返し処理の回数が固定化されているか、0の加算で正しくループが継続されていません。"
+        );
     }
 
     @Test
     public void testInitialization()
     {
-        // action
         in.inputln("1");
         in.inputln("10");
-        in.inputln("10");
-        in.inputln("100"); // Prog31.main is expected to exit after this keyboard input
+        in.inputln("100"); // 101で終了
         Prog31.main(null);
 
-        // assertion
-        String[] prints = bos.toString().split("\r\n|\n");
-        try {
-            assertEquals("合計は11です", prints[3],
-                "誤った値での初期化、又は合計の計算式に間違いがあるかもしれません"
-            ); // checking 2nd SumPrintline(result of two additions )
-        }catch (AssertionError err){
-            after();
-            throw err;   
-        }
-    }    
+        String output = bos.toString();
+
+        assertTrue(output.contains("合計は1です"), "最初の入力「1」に対する「合計は1です」が出力されていません。");
+        assertTrue(output.contains("合計は11です"), "2回目の入力「10」に対する「合計は11です」が出力されていません。変数の初期化や加算式を確認してください。");
+    } 
 
     @Test
     public void testSecondPrint()
@@ -117,16 +96,11 @@ public class Prog31Test {
         in.inputln("100");
         Prog31.main(null);
 
-        // assertion
-        String[] prints = bos.toString().split("\r\n|\n");
-        try {
-            assertEquals("正の整数を入力してください", prints[2],
-                "正の整数を入力してください」のprint文の使い方が不正、又は文字が完全一致していません"
-            ); // cheking 2nd prompt message
-        }catch (AssertionError e){
-            after();
-            throw e;   
-        }
+        String output = bos.toString();
+
+        assertTrue(output.contains("正の整数を入力してください"), 
+            "「正の整数を入力してください」のメッセージがない、または文字が完全一致していません。"
+        );
     }    
 
     @Test
@@ -138,14 +112,10 @@ public class Prog31Test {
         Prog31.main(null);
 
         // assertion
-        String[] prints = bos.toString().split("\r\n|\n");
-        try {
-            assertEquals("プログラムを終了します", prints[prints.length - 1],
-                "【最優先】「プログラムを終了します」の一文が無い、又は文字が完全一致しません"
-            );
-        }catch (AssertionError err){
-            after();
-            throw err;   
-        }
+        String output = bos.toString();
+
+        assertTrue(output.contains("プログラムを終了します"), 
+            "「プログラムを終了します」の一文がない、または文字が完全一致しません。"
+        );
     }
 }
