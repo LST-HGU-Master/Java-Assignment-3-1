@@ -6,7 +6,7 @@ import java.io.*;
 /**
  * @version (20230417)
  *   supporting both println and print("\n") on Windows
- *  @version(20261008) revised 
+ *  @version(20261013) revised 
  **/
 public class Prog31Test {
 
@@ -35,23 +35,18 @@ public class Prog31Test {
     }
 
     @Test
-    public void testFinalSumPrint()
-    {
-        // action
-        in.inputln("99");
-        in.inputln("1");
-        in.inputln("1"); // ここで合計101となり終了すべき
-        in.inputln("1");
+    public void testBoundaryValue100() {
+        in.inputln("50");
+        in.inputln("50"); // 合計100（ここではまだ終了してはいけない）
+        in.inputln("1");  // 合計101（ここで終了）
+        in.inputln("99"); // 終了後に読み込まれないはずの入力
         Prog31.main(null);
 
         String output = bos.toString().replace("\r\n", "\n");
-        
-        assertTrue(output.contains("合計は101です"), 
-            "合計値が101になった際の出力「合計は101です」が見つかりません。"
-        );
-        assertFalse(output.contains("合計は102です"), 
-            "合計値が100を超えても処理を継続しています。"
-        );
+
+        assertTrue(output.contains("合計は100です"), "合計がちょうど100の時は処理を終了せず、次の入力を受け付ける必要があります（> 100 の条件を確認してください）。");
+        assertTrue(output.contains("合計は101です"), "合計が100を超えた（101）時点で処理を終了してください。");
+        assertFalse(output.contains("合計は200です"), "合計が100を超えても処理が継続しています。");
     }
 
 
@@ -88,34 +83,24 @@ public class Prog31Test {
     } 
 
     @Test
-    public void testSecondPrint()
-    {
-        // action
-        in.inputln("1");
-        in.inputln("10");
-        in.inputln("100");
+    public void testPrintsAndEnding() {
+        in.inputln("101");
         Prog31.main(null);
 
-        String output = bos.toString();
+        String[] lines = bos.toString().replace("\r\n", "\n").split("\n");
 
-        assertTrue(output.contains("正の整数を入力してください"), 
-            "「正の整数を入力してください」のメッセージがない、または文字が完全一致していません。"
-        );
-    }    
+        boolean foundPrompt = false;
+        boolean foundEnding = false;
 
-    @Test
-    public void testLastPrint()
-    {
-        // action
-        in.inputln("100");
-        in.inputln("100");
-        Prog31.main(null);
+        for (String line : lines) {
+            String trimmed = line.trim();
+            if (trimmed.equals("正の整数を入力してください")) 
+                foundPrompt = true;
+            if (trimmed.equals("プログラムを終了します")) 
+                foundEnding = true;
+        }
 
-        // assertion
-        String output = bos.toString();
-
-        assertTrue(output.contains("プログラムを終了します"), 
-            "「プログラムを終了します」の一文がない、または文字が完全一致しません。"
-        );
+        assertTrue(foundPrompt, "「正の整数を入力してください」の後に改行（println）を入れて出力してください。");
+        assertTrue(foundEnding, "「プログラムを終了します」の一文がない、または文字が完全一致しません。");
     }
 }
